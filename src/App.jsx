@@ -10,17 +10,29 @@ function App() {
   const [weather, setWeather] = useState("");
 
   const search = (evt) => {
+    var city = "",
+      country = "";
 
     if (evt.key === "Enter") {
-      fetch(`${baseURL}q=${query}&units=metric&appid=${apiKey}`)
-        .then((res) => res.json())
-        .then((result) => {
-          console.log(result);
-          setWeather(result);
-          setQuery("");
-        });
+      if (query.includes(",")) {
+        [city, country] = query.split(",");
+        console.log(
+          `${baseURL}q=${city},${country}&units=metric&appid=${apiKey}`
+        );
+        fetch(`${baseURL}q=${city},${country}&units=metric&appid=${apiKey}`)
+          .then((res) => res.json())
+          .then((result) => {
+            console.log(result);
+            setWeather(result);
+            setQuery("");
+          })
+          .catch((err) => {
+            console.log(err);
+            });
+      }
     }
   };
+
   const createDate = (dateParam) => {
     let months = [
       "January",
@@ -73,7 +85,7 @@ function App() {
           <input
             type="text"
             className="search-bar"
-            placeholder="Search"
+            placeholder="Dubai,UAE"
             onChange={(e) => {
               setQuery(e.target.value);
             }}
